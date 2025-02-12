@@ -63,12 +63,12 @@
 
         /* Logo */
         .header-info img {
-            height: 80px;
+            height: 70px;
         }
 
         /* Hora local */
         .header-info .local-time {
-            font-size: 40px;
+            font-size: 30px;
             font-weight: bold;
             color: #d7272f; /* Color para la hora */
         }
@@ -119,9 +119,22 @@
     </div>
 
     <script>
-        let readingTime = parseInt(localStorage.getItem("readingTime")) * 60; // Convertido a segundos
-        let examTime = parseInt(localStorage.getItem("examTime")) * 60; // Convertido a segundos
+        // Verificar que los valores en localStorage existan y sean válidos
+        let readingTime = parseInt(localStorage.getItem("readingTime"));
+        let examTime = parseInt(localStorage.getItem("examTime"));
         let examNames = JSON.parse(localStorage.getItem("examNames"));
+
+        // Comprobar si los valores obtenidos son válidos (en caso de que localStorage esté vacío)
+        if (isNaN(readingTime) || readingTime <= 0) {
+            readingTime = 5; // Valor por defecto en minutos (puedes cambiarlo)
+        }
+        if (isNaN(examTime) || examTime <= 0) {
+            examTime = 60; // Valor por defecto en minutos (puedes cambiarlo)
+        }
+
+        if (!Array.isArray(examNames) || examNames.length === 0) {
+            examNames = ["Examen 1", "Examen 2"]; // Valor por defecto si no hay exámenes
+        }
 
         document.getElementById("examList").innerHTML = "<strong>Exámenes:</strong><br>" + examNames.filter(e => e).join("<br>");
 
@@ -129,7 +142,7 @@
         let messageElement = document.getElementById("message");
 
         let isReading = true;
-        let totalTime = readingTime;
+        let totalTime = readingTime * 60; // Convertir a segundos
 
         // Función para mostrar la hora local en tiempo real
         function updateLocalTime() {
@@ -160,7 +173,7 @@
                     playVoice("Tiempo de lectura terminado");
                     messageElement.textContent = "Tiempo de lectura terminado";
                     isReading = false;
-                    totalTime = examTime; // Cambia al tiempo de examen
+                    totalTime = examTime * 60; // Cambia al tiempo de examen en segundos
                     timerElement.style.color = "black"; // Cambia a color negro
                     setTimeout(() => messageElement.textContent = '', 2000); // Mensaje desaparecerá después de 2 segundos
                 }
