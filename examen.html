@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Temporizador del Examen</title>
+    <style>
+        /* Diseño general de la página */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #00205c; /* Color de fondo de la página */
+        }
+
+        /* Contenedor principal */
+        .container {
+            text-align: center;
+            padding: 40px;
+            border-radius: 10px;
+            background-color: #ffffff;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 1000px;
+            color: #00205c;
+        }
+
+        /* Estilo del temporizador */
+        .timer {
+            font-size: 200px;
+            font-weight: bold;
+            color: red;
+        }
+
+        /* Contenedor del temporizador */
+        .timer-container {
+            margin: 20px 0;
+        }
+
+        /* Estilo del mensaje de fin de lectura */
+        #message {
+            font-size: 24px;
+            color: green;
+        }
+
+        /* Información de los exámenes */
+        .exam-info {
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+
+        /* Estilo de la cabecera */
+        .header-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        /* Logo */
+        .header-info img {
+            height: 80px;
+        }
+
+        /* Hora local */
+        .header-info .local-time {
+            font-size: 40px;
+            font-weight: bold;
+            color: #d7272f; /* Color para la hora */
+        }
+
+        /* Estilo del título */
+        h1 {
+            font-size: 40px;
+            font-weight: bold;
+            color: #00205c;
+            margin-top: 20px;
+        }
+
+        /* Diseño del footer con el texto */
+        .footer {
+            margin-top: 30px;
+            font-size: 16px;
+            color: #00205c;
+        }
+
+        .footer a {
+            color: #d7272f;
+            text-decoration: none;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header-info">
+            <img src="logo.png" alt="Logo del colegio"> <!-- Asegúrate de tener el logo en el mismo directorio -->
+            <div id="localTime" class="local-time"></div>
+        </div>
+        
+        <h1>MOCKS IB 2025 - COLEGIO LAMATEPEC</h1>
+
+        <div class="exam-info" id="examList"></div>
+
+        <div class="timer-container">
+            <div id="timer" class="timer">00:00:00</div>
+        </div>
+
+        <div id="message"></div>
+
+        <div class="footer">
+            <p>Diseñado por: <strong>Osmin Antonio Orellana Leiva</strong>, Profesor de Informática BI</p>
+        </div>
+    </div>
+
+    <script>
+        let readingTime = parseInt(localStorage.getItem("readingTime")) * 60; // Convertido a segundos
+        let examTime = parseInt(localStorage.getItem("examTime")) * 60; // Convertido a segundos
+        let examNames = JSON.parse(localStorage.getItem("examNames"));
+
+        document.getElementById("examList").innerHTML = "<strong>Exámenes:</strong><br>" + examNames.filter(e => e).join("<br>");
+
+        let timerElement = document.getElementById("timer");
+        let messageElement = document.getElementById("message");
+
+        let isReading = true;
+        let totalTime = readingTime;
+
+        // Función para mostrar la hora local en tiempo real
+        function updateLocalTime() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            document.getElementById('localTime').textContent = `${hours}:${minutes}:${seconds}`;
+        }
+
+        // Función para reproducir la voz
+        function playVoice(message) {
+            const utterance = new SpeechSynthesisUtterance(message);
+            utterance.lang = 'es-ES'; // Idioma español
+            speechSynthesis.speak(utterance);
+        }
+
+        function startTimer() {
+            let interval = setInterval(() => {
+                let hours = Math.floor(totalTime / 3600);
+                let minutes = Math.floor((totalTime % 3600) / 60);
+                let seconds = totalTime % 60;
+
+                timerElement.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
+                if (isReading && totalTime <= 0) {
+                    // Fin de tiempo de lectura
+                    playVoice("Tiempo de lectura terminado");
+                    messageElement.textContent = "Tiempo de lectura terminado";
+                    isReading = false;
+                    totalTime = examTime; // Cambia al tiempo de examen
+                    timerElement.style.color = "black"; // Cambia a color negro
+                    setTimeout(() => messageElement.textContent = '', 2000); // Mensaje desaparecerá después de 2 segundos
+                }
+
+                if (!isReading && totalTime <= 0) {
+                    clearInterval(interval);
+                    alert("El examen ha finalizado.");
+                }
+
+                totalTime--;
+            }, 1000);
+        }
+
+        // Actualizar la hora local cada segundo
+        setInterval(updateLocalTime, 1000);
+
+        startTimer();
+    </script>
+
+</body>
+</html>
