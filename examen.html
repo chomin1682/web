@@ -162,6 +162,7 @@
 
         function startTimer() {
             let interval = setInterval(() => {
+                // Recalcular horas, minutos y segundos correctamente
                 let hours = Math.floor(totalTime / 3600); // Horas
                 let minutes = Math.floor((totalTime % 3600) / 60); // Minutos
                 let seconds = totalTime % 60; // Segundos
