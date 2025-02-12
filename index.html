@@ -146,10 +146,12 @@
             let examTimeMinutes = document.getElementById("examTimeMinutes").value;
             let examNames = document.getElementById("examNames").value.split(',');
 
+            // Convertir las horas y minutos de desarrollo en minutos totales
+            let totalExamTime = (parseInt(examTimeHours) * 60) + parseInt(examTimeMinutes);
+
             // Guardar en localStorage
             localStorage.setItem("readingTime", readingTime);
-            localStorage.setItem("examTimeHours", examTimeHours);
-            localStorage.setItem("examTimeMinutes", examTimeMinutes);
+            localStorage.setItem("examTime", totalExamTime);  // Guardar el tiempo total en minutos
             localStorage.setItem("examNames", JSON.stringify(examNames));
 
             // Redirigir a la página del examen
