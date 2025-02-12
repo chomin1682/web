@@ -142,7 +142,7 @@
         let messageElement = document.getElementById("message");
 
         let isReading = true;
-        let totalTime = readingTime * 60; // Convertir a segundos
+        let totalTime = readingTime * 60; // Convertir a segundos para lectura
 
         // Función para mostrar la hora local en tiempo real
         function updateLocalTime() {
@@ -162,9 +162,9 @@
 
         function startTimer() {
             let interval = setInterval(() => {
-                let hours = Math.floor(totalTime / 3600);
-                let minutes = Math.floor((totalTime % 3600) / 60);
-                let seconds = totalTime % 60;
+                let hours = Math.floor(totalTime / 3600); // Horas
+                let minutes = Math.floor((totalTime % 3600) / 60); // Minutos
+                let seconds = totalTime % 60; // Segundos
 
                 // Mostrar el tiempo correctamente con horas, minutos y segundos
                 timerElement.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
@@ -181,10 +181,11 @@
 
                 if (!isReading && totalTime <= 0) {
                     clearInterval(interval);
+                    playVoice("El examen ha finalizado");
                     alert("El examen ha finalizado.");
                 }
 
-                totalTime--;
+                totalTime--; // Decrementa el tiempo cada segundo
             }, 1000);
         }
 
