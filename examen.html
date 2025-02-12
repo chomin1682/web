@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Temporizador del Examen</title>
     <style>
-        /* Diseño general de la página */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -14,10 +13,9 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #00205c; /* Color de fondo de la página */
+            background-color: #00205c;
         }
 
-        /* Contenedor principal */
         .container {
             text-align: center;
             padding: 40px;
@@ -29,31 +27,26 @@
             color: #00205c;
         }
 
-        /* Estilo del temporizador */
         .timer {
             font-size: 200px;
             font-weight: bold;
             color: red;
         }
 
-        /* Contenedor del temporizador */
         .timer-container {
             margin: 20px 0;
         }
 
-        /* Estilo del mensaje de fin de lectura */
         #message {
             font-size: 24px;
             color: green;
         }
 
-        /* Información de los exámenes */
         .exam-info {
             font-size: 20px;
             margin-bottom: 20px;
         }
 
-        /* Estilo de la cabecera */
         .header-info {
             display: flex;
             justify-content: space-between;
@@ -61,19 +54,16 @@
             margin-bottom: 20px;
         }
 
-        /* Logo */
         .header-info img {
             height: 70px;
         }
 
-        /* Hora local */
         .header-info .local-time {
             font-size: 30px;
             font-weight: bold;
-            color: #d7272f; /* Color para la hora */
+            color: #d7272f;
         }
 
-        /* Estilo del título */
         h1 {
             font-size: 40px;
             font-weight: bold;
@@ -81,7 +71,6 @@
             margin-top: 20px;
         }
 
-        /* Diseño del footer con el texto */
         .footer {
             margin-top: 30px;
             font-size: 16px;
@@ -119,32 +108,18 @@
     </div>
 
     <script>
-        // Verificar que los valores en localStorage existan y sean válidos
-        let readingTime = parseInt(localStorage.getItem("readingTime"));
-        let examTime = parseInt(localStorage.getItem("examTime"));
-        let examNames = JSON.parse(localStorage.getItem("examNames"));
+        let readingTime = parseInt(localStorage.getItem("readingTime")) || 5; // Si no existe, por defecto 5 minutos
+        let examTime = parseInt(localStorage.getItem("examTime")) || 60; // Si no existe, por defecto 60 minutos
+        let examNames = JSON.parse(localStorage.getItem("examNames")) || ["Examen 1", "Examen 2"]; // Si no existe, por defecto
 
-        // Comprobar si los valores obtenidos son válidos (en caso de que localStorage esté vacío)
-        if (isNaN(readingTime) || readingTime <= 0) {
-            readingTime = 5; // Valor por defecto en minutos (puedes cambiarlo)
-        }
-        if (isNaN(examTime) || examTime <= 0) {
-            examTime = 60; // Valor por defecto en minutos (puedes cambiarlo)
-        }
-
-        if (!Array.isArray(examNames) || examNames.length === 0) {
-            examNames = ["Examen 1", "Examen 2"]; // Valor por defecto si no hay exámenes
-        }
-
-        document.getElementById("examList").innerHTML = "<strong>Exámenes:</strong><br>" + examNames.filter(e => e).join("<br>");
+        document.getElementById("examList").innerHTML = "<strong>Exámenes:</strong><br>" + examNames.join("<br>");
 
         let timerElement = document.getElementById("timer");
         let messageElement = document.getElementById("message");
 
         let isReading = true;
-        let totalTime = readingTime * 60; // Convertir a segundos para lectura
+        let totalTime = readingTime * 60; // Convertido a segundos
 
-        // Función para mostrar la hora local en tiempo real
         function updateLocalTime() {
             const now = new Date();
             const hours = String(now.getHours()).padStart(2, '0');
@@ -153,7 +128,6 @@
             document.getElementById('localTime').textContent = `${hours}:${minutes}:${seconds}`;
         }
 
-        // Función para reproducir la voz
         function playVoice(message) {
             const utterance = new SpeechSynthesisUtterance(message);
             utterance.lang = 'es-ES'; // Idioma español
@@ -162,12 +136,10 @@
 
         function startTimer() {
             let interval = setInterval(() => {
-                // Recalcular horas, minutos y segundos correctamente
-                let hours = Math.floor(totalTime / 3600); // Horas
-                let minutes = Math.floor((totalTime % 3600) / 60); // Minutos
-                let seconds = totalTime % 60; // Segundos
+                let hours = Math.floor(totalTime / 3600);
+                let minutes = Math.floor((totalTime % 3600) / 60);
+                let seconds = totalTime % 60;
 
-                // Mostrar el tiempo correctamente con horas, minutos y segundos
                 timerElement.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 
                 if (isReading && totalTime <= 0) {
@@ -182,17 +154,14 @@
 
                 if (!isReading && totalTime <= 0) {
                     clearInterval(interval);
-                    playVoice("El examen ha finalizado");
                     alert("El examen ha finalizado.");
                 }
 
-                totalTime--; // Decrementa el tiempo cada segundo
+                totalTime--;
             }, 1000);
         }
 
-        // Actualizar la hora local cada segundo
-        setInterval(updateLocalTime, 1000);
-
+        setInterval(updateLocalTime, 1000); // Actualiza la hora local cada segundo
         startTimer();
     </script>
 
