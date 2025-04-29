@@ -165,8 +165,9 @@
 
                 if (!isReading && totalTime <= 0) {
                     clearInterval(interval);
+                     playVoice("La prueba ha finalizado. Por favor espere instrucciones.");
                     messageElement.textContent = "El tiempo de desarrollo del examen ha finalizado";
-                    alert("El examen ha finalizado.");
+                   
                 }
 
                 totalTime--;
